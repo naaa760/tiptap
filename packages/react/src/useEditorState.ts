@@ -100,8 +100,10 @@ class EditorStateManager<TEditor extends Editor | null = Editor | null> {
       const currentEditor = this.editor
 
       currentEditor.on('transaction', fn)
+      currentEditor.on('update', fn)
       return () => {
         currentEditor.off('transaction', fn)
+        currentEditor.off('update', fn)
       }
     }
 
