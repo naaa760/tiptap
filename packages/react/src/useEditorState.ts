@@ -87,21 +87,18 @@ class EditorStateManager<TEditor extends Editor | null = Editor | null> {
     this.editor = nextEditor as TEditor
 
     if (this.editor) {
-      /**
-       * This will force a re-render when the editor state changes.
-       * This is to support things like `editor.can().toggleBold()` in components that `useEditor`.
-       * This could be more efficient, but it's a good trade-off for now.
-       */
-      const fn = () => {
+      const notify = () => {
         this.transactionNumber += 1
         this.subscribers.forEach(callback => callback())
       }
 
       const currentEditor = this.editor
 
-      currentEditor.on('transaction', fn)
+      currentEditor.on('transaction', notify)
+      currentEditor.on('update', notify)
       return () => {
-        currentEditor.off('transaction', fn)
+        currentEditor.off('transaction', notify)
+        currentEditor.off('update', notify)
       }
     }
 
